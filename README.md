@@ -1,4 +1,3 @@
-````markdown
 # ExoHunter-ML
 
 ### Machine Learning Pipeline for Automated Exoplanet Candidate Detection from Astronomical Light Curves

@@ -10,7 +10,7 @@ Developed as a project for the **Machine Learning Engineering** course, with emp
 
 ---
 
-# 🌌 Overview
+# Overview
 
 The discovery of exoplanets generates large volumes of astronomical observations that must be analyzed to identify subtle variations in stellar brightness.
 
@@ -71,7 +71,7 @@ Astronomical Observation
 
 ---
 
-# 🎯 Objectives
+# Objectives
 
 ## General Objective
 
@@ -100,7 +100,7 @@ Develop a complete and reproducible Machine Learning pipeline for the identifica
 
 ---
 
-# 🧠 Machine Learning Approach
+# Machine Learning Approach
 
 The project will investigate multiple modeling approaches rather than assuming that a more complex model is automatically better.
 
@@ -143,7 +143,7 @@ The final model will be selected based on experimental evidence rather than mode
 
 ---
 
-# 🤖 Models
+# Models
 
 The exact model configuration will be defined after the dataset analysis.
 
@@ -166,7 +166,7 @@ A simpler model will initially be used as a **baseline**, allowing the performan
 
 ---
 
-# 📊 Evaluation
+# Evaluation
 
 The models will be evaluated using metrics appropriate for the classification problem.
 
@@ -193,7 +193,7 @@ The final evaluation will also investigate:
 
 ---
 
-# 🔍 Explainability
+# Explainability
 
 Model predictions will be analyzed using explainability techniques.
 
@@ -247,7 +247,7 @@ Instead, the repository will contain reproducible data-ingestion procedures.
 
 ---
 
-# 🧪 Experimental Methodology
+# Experimental Methodology
 
 The experimental process will follow a controlled Machine Learning workflow.
 
@@ -287,7 +287,7 @@ All transformations learned from the training data will be fitted exclusively on
 
 ---
 
-# 🏗️ Project Architecture
+# Project Architecture
 
 The repository is organized to separate data, experimentation, source code, models, documentation, and results.
 
@@ -328,7 +328,7 @@ ExoHunter-ML/
 
 ---
 
-# 📁 Repository Structure
+# Repository Structure
 
 ### `data/`
 
@@ -446,7 +446,7 @@ The final notebook should execute from beginning to end without requiring manual
 
 ---
 
-# 🚀 Operationalization
+# Operationalization
 
 Although the academic implementation will primarily use Google Colab, the project will also propose a production-oriented architecture.
 
@@ -518,7 +518,7 @@ Potential indicators include:
 
 ---
 
-# 🔄 Retraining Strategy
+# Retraining Strategy
 
 The model should not be considered permanently valid after deployment.
 
@@ -546,7 +546,7 @@ The exact thresholds will be defined based on the final model and experimental r
 
 ---
 
-# 🧩 Technologies
+# Technologies
 
 The project is expected to use the following technologies:
 
@@ -569,7 +569,7 @@ Additional libraries may be added according to the final methodology.
 
 ---
 
-# 📓 Academic Deliverables
+# Academic Deliverables
 
 The project is being developed according to the requirements of the Machine Learning Engineering course.
 
@@ -588,7 +588,7 @@ The final submission will include:
 
 ---
 
-# 📚 Documentation
+# Documentation
 
 The technical documentation is maintained in:
 
@@ -611,9 +611,9 @@ The final report will contain:
 
 ---
 
-# 📈 Project Status
+# Project Status
 
-🚧 **Under Development**
+ **Under Development**
 
 Current stage:
 
@@ -638,7 +638,7 @@ Current stage:
 
 ---
 
-# 🔭 Future Work
+# Future Work
 
 Potential extensions beyond the scope of the initial project include:
 
@@ -656,7 +656,7 @@ Potential extensions beyond the scope of the initial project include:
 
 ---
 
-# ⚖️ Scientific and Ethical Considerations
+# Scientific and Ethical Considerations
 
 The system developed in this project is intended as a computational aid for astronomical data analysis.
 
@@ -690,24 +690,3 @@ Potential sources include:
 * Machine Learning literature.
 
 ---
-
-# 👤 Author
-
-**Jay Pitchula**
-
-Engineering / Machine Learning / Aerospace
-
-GitHub:
-
-[@el-pitchula](https://github.com/el-pitchula)
-
----
-
-# 📄 License
-
-This project is distributed under the MIT License.
-
-See [`LICENSE`](LICENSE) for details.
-
-```
-```

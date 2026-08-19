@@ -86,16 +86,16 @@ O fluxo de trabalho contido nos notebooks segue as seguintes etapas lineares:
 
 ```mermaid
 flowchart TD
-    A[📊 Ingestão dos Datasets Kepler FLUX] --> B[🧹 Análise Exploratória & Limpeza de Dados]
-    B --> C[⚙️ Extração de Features extract_flux_features]
-    C --> D[⚖️ Alinhamento de Colunas rf.feature_names_in_]
-    D --> E[🔀 Divisão Treino / Teste & Resampling]
+    A[Ingestão dos Datasets Kepler FLUX] --> B[Análise Exploratória & Limpeza de Dados]
+    B --> C[Extração de Features extract_flux_features]
+    C --> D[Alinhamento de Colunas rf.feature_names_in_]
+    D --> E[Divisão Treino / Teste & Resampling]
     
-    E --> F1[🤖 Random Forest Classifier]
-    E --> F2[⚡ XGBoost Classifier]
+    E --> F1[Random Forest Classifier]
+    E --> F2[XGBoost Classifier]
     
-    F1 & F2 --> G[📈 Avaliação de Métricas ROC-AUC e Matriz de Confusão]
-    G --> H[🔮 Teste de Inferência Pontual em Amostra demo_index]
+    F1 & F2 --> G[Avaliação de Métricas ROC-AUC e Matriz de Confusão]
+    G --> H[Teste de Inferência Pontual em Amostra demo_index]
 
 ```
 

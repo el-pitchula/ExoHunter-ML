@@ -1,3 +1,42 @@
+Perfeito! Sendo um GIF de demonstração orbital e da construção da curva de luz em tempo real, o lugar ideal para ele é logo no início da seção **Fundamentação Física & Modelagem Matemática** ou na parte de **Demonstração de Inferência**.
+
+O ideal é colocá-lo na **Fundamentação Física**, ao lado/acima do esquema do trânsito, para dar vida à explicação de como a posição orbital altera o fluxo normalizado.
+
+---
+
+### Onde e como cada imagem/GIF foi posicionado:
+
+1. **`0002.gif` (Animação Orbital & Curva de Luz):**
+* **Onde:** No topo da **Fundamentação Física & Modelagem Matemática**.
+* **Função:** Demonstrar dinamicamente a passagem do exoplaneta frente à estrela e a queda simultânea do fluxo no gráfico.
+
+
+2. **`0001.png` (Trânsito e Curva de Luz Resultante):**
+* **Onde:** Logo abaixo do GIF, na **Fundamentação Física**.
+* **Função:** Esquema estático com as etapas antes, durante e depois do trânsito.
+
+
+3. **`0004.png` (SHAP Summary Plot):**
+* **Onde:** Na seção **Engenharia de Features**.
+* **Função:** Ilustrar a importância e o impacto dos atributos no modelo.
+
+
+4. **`0005.png` (Matriz de Confusão do Teste):**
+* **Onde:** Na seção **Treinamento & Avaliação de Modelos**.
+* **Função:** Apresentar a avaliação de desempenho e taxa de falsos negativos.
+
+
+5. **`0003.png` (Profundidade x Probabilidade):**
+* **Onde:** Na seção **Demonstração de Inferência**.
+* **Função:** Mostrar a análise visual dos candidatos previstos x observados.
+
+
+
+---
+
+### Código completo do `README.md` atualizado
+
+```markdown
 <div align="center">
 
 # 🪐 ExoHunter-ML
@@ -37,7 +76,7 @@ O **ExoHunter-ML** aborda a classificação e identificação de candidatas a ex
 
 Devido ao severo desbalanceamento de classes em observações fotométricas reais (onde a imensa maioria dos sinais pertence a estrelas sem trânsitos planetários), os notebooks do projeto cobrem experimentalmente:
 - **Análise Exploratória e Diagnóstico de Desbalanceamento:** Leitura e visualização das curvas de luz de treino e teste.
-- **Modelagem Matemática Dedicada:** Formulação física da atenuação estelar e extração estatística de momentos de distribuição.
+- **Modelagem Matemática Dedicada:** Formulação física da atenuação estelar e extração estatística de moments de distribuição.
 - **Engenharia de Features:** Extração e seleção de atributos informativos via `extract_flux_features()`.
 - **Modelagem Preditiva & Resampling:** Comparação entre modelos de Machine Learning (Random Forest, XGBoost) e estratégias de tratamento do desbalanceamento de dados.
 - **Validação e Inferência em Amostras:** Demonstração da extração e predição de candidatos usando fatias de teste.
@@ -46,18 +85,21 @@ Devido ao severo desbalanceamento de classes em observações fotométricas reai
 
 ## Fundamentação Física & Modelagem Matemática
 
-O projeto fundamenta-se na **Fotometria de Trânsito**, na qual o fluxo luminoso de uma estrela hospedeira sofre uma queda periódica no brilho quando um exoplaneta transita diante de seu disco estelar.
+O projeto fundamenta-se na **Fotometria de Trânsito**, na qual o fluxo luminoso de uma estrela hospedeira sofre uma queda periódica no brilho quando um exoplaneta transita diante de seu disco estelar em relação à linha de visada do observador.
 
-```text
-       Fluxo Luminoso (F)
-         ▲
-   1.0 ──┤────────┐               ┌────────  (Brilho Estelar Normal)
-         │        │               │
-  1-ΔF ──┤        └───────────────┘          (Evento de Trânsito Exoplanetário)
-         └────────┼───────────────┼────────► Tempo (t)
-                  t_1             t_2
+<p align="center">
+  <img src="assets/0002.gif" alt="Simulação de Trânsito Exoplanetário e Curva de Luz" width="80%"/>
+  <br/>
+  <i>Figura 1: Animação demonstrativa da posição orbital e a respectiva construção da curva de luz fotométrica em tempo real.</i>
+</p>
 
-```
+<br/>
+
+<p align="center">
+  <img src="assets/0001.png" alt="Efeito do Trânsito Exoplanetário na Curva de Luz" width="85%"/>
+  <br/>
+  <i>Figura 2: Estágios fundamentais da passagem planetária (antes, durante e depois) e o formato do perfil de atenuação.</i>
+</p>
 
 ### 1. Profundidade do Trânsito ($\Delta F$)
 
@@ -110,6 +152,10 @@ Para otimizar o desempenho do classificador, a função `extract_flux_features()
 | `flux_skew` | Assimetria (*Skewness*) | Sensibilidade a desvios unilaterais causados por trânsitos |
 | `flux_kurtosis` | Curtose (*Kurtosis*) | Isolamento de picos extremos e anomalias instrumentais |
 
+### Explicabilidade dos Atributos (SHAP Analysis)
+
+A contribuição relativa das features na tomada de decisão dos modelos é validada utilizando valores SHAP (*SHapley Additive exPlanations*):
+
 ---
 
 ## Treinamento & Avaliação de Modelos
@@ -120,23 +166,11 @@ Os notebooks comparam estratégias para maximizar a capacidade de detecção da 
 * **Tratamento do Desbalanceamento:** Aplicação de reamostragem/pesos de classe para evitar overfitting na classe majoritária.
 * **Métricas Focadas:** Curva ROC-AUC, Precision, Recall e análise cuidadosa da **Matriz de Confusão**, onde o objetivo principal é a minimização de **Falsos Negativos**.
 
-```text
-                 Matriz de Confusão (Esquema de Avaliação)
-                ┌───────────────────┬───────────────────┐
-                │ Pred: Sem Planeta │ Pred: Exoplaneta  │
-┌───────────────┼───────────────────┼───────────────────┤
-│ Real: Classe 1│        TN         │        FP         │
-├───────────────┼───────────────────┼───────────────────┤
-│ Real: Classe 2│        FN         │        TP         │
-└───────────────┴───────────────────┴───────────────────┘
-
-```
-
 ---
 
 ## Demonstração de Inferência
 
-Os notebooks trazem um pipeline prático de inferência para extrair features e predizer uma amostra individual de teste selecionada por seu índice (`demo_index`):
+Os notebooks trazem um pipeline prático de inferência para extrair features e predizer amostras individuais de teste selecionadas por seu índice (`demo_index`):
 
 ```python
 # Exemplo de pipeline de inferência presente nos notebooks
@@ -157,12 +191,23 @@ pred = rf.predict(features_demo)
 
 ```
 
+### Análise de Candidatos & Probabilidades
+
+A validação gráfica dos candidatos compara a profundidade de queda observada (`max_drop`) com a probabilidade prevista pelo modelo, permitindo a definição de um limiar (*threshold*) otimizado de decisão:
+
 ---
 
 ## Estrutura do Repositório
 
 ```text
 ExoHunter-ML/
+│
+├── 📁 assets/                         # Imagens e gifs utilizados na documentação
+│   ├── 0001.png
+│   ├── 0002.gif
+│   ├── 0003.png
+│   ├── 0004.png
+│   └── 0005.png
 │
 ├── 📄 ExoHunter_ML.ipynb              # Pipeline principal: EDA, extração de features e modelos
 ├── 📄 ExoHunter_ML(lab2).ipynb        # Experimentos secundários, tuning e validações adicionais
@@ -177,14 +222,15 @@ ExoHunter-ML/
 ## Como Executar
 
 1. **Clone o repositório:**
+
 ```bash
 git clone [https://github.com/el-pitchula/ExoHunter-ML.git](https://github.com/el-pitchula/ExoHunter-ML.git)
 cd ExoHunter-ML
 
 ```
 
-
 2. **Crie e ative um ambiente virtual:**
+
 ```bash
 python -m venv venv
 # Linux/macOS
@@ -194,15 +240,15 @@ venv\Scripts\activate
 
 ```
 
-
 3. **Instale as dependências:**
+
 ```bash
 pip install -r requirements.txt
 
 ```
 
-
 4. **Execute os notebooks:**
+
 ```bash
 jupyter notebook ExoHunter_ML.ipynb
 

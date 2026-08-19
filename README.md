@@ -1,8 +1,3 @@
-Aqui está a versão do **README.md** ajustada para refletir **fielmente e de forma objetiva** o conteúdo presente nos 3 notebooks do repositório (`ExoHunter_ML.ipynb`, `ExoHunter_ML(lab2).ipynb` e `modelagem_matemática(ExoHML).ipynb`).
-
-Removi as seções teóricas de MLOps/deploy futuro que não estão implementadas no código atual, mantendo o foco total na análise exploratória, modelagem matemática da fotometria, engenharia de features, tratamento de desbalanceamento, avaliação dos modelos e na demonstração prática de inferência.
-
-```markdown
 <div align="center">
 
 # 🪐 ExoHunter-ML

@@ -18,7 +18,7 @@
 
 ---
 
-## 📌 Sumário
+## Sumário
 - [Visão Geral](#-visão-geral)
 - [Fundamentação Física & Modelagem Matemática](#-fundamentação-física--modelagem-matemática)
 - [Arquitetura da Pipeline](#-arquitetura-da-pipeline)
@@ -31,7 +31,7 @@
 
 ---
 
-## 🔭 Visão Geral
+## Visão Geral
 
 O **ExoHunter-ML** aborda a classificação e identificação de candidatas a exoplanetas analisando séries temporais do **Telescópio Espacial Kepler (NASA)**. 
 
@@ -44,7 +44,7 @@ Devido ao severo desbalanceamento de classes em observações fotométricas reai
 
 ---
 
-## 📐 Fundamentação Física & Modelagem Matemática
+## Fundamentação Física & Modelagem Matemática
 
 O projeto fundamenta-se na **Fotometria de Trânsito**, na qual o fluxo luminoso de uma estrela hospedeira sofre uma queda periódica no brilho quando um exoplaneta transita diante de seu disco estelar.
 
@@ -77,7 +77,7 @@ $$\text{Curtose (Kurtosis)} = \frac{\frac{1}{N} \sum_{i=1}^{N} (F_i - \mu)^4}{\s
 
 ---
 
-## 🛠 Arquitetura da Pipeline
+## Arquitetura da Pipeline
 
 O fluxo de trabalho contido nos notebooks segue as seguintes etapas lineares:
 
@@ -98,7 +98,7 @@ flowchart TD
 
 ---
 
-## 🧬 Engenharia de Features
+## Engenharia de Features
 
 Para otimizar o desempenho do classificador, a função `extract_flux_features()` transforma os pontos brutos da série temporal de fluxo em um conjunto compacto de recursos estatísticos discriminatórios:
 
@@ -112,7 +112,7 @@ Para otimizar o desempenho do classificador, a função `extract_flux_features()
 
 ---
 
-## 📊 Treinamento & Avaliação de Modelos
+## Treinamento & Avaliação de Modelos
 
 Os notebooks comparam estratégias para maximizar a capacidade de detecção da classe minoritária (estrelas com exoplanetas confirmados):
 
@@ -134,7 +134,7 @@ Os notebooks comparam estratégias para maximizar a capacidade de detecção da 
 
 ---
 
-## 🔮 Demonstração de Inferência
+## Demonstração de Inferência
 
 Os notebooks trazem um pipeline prático de inferência para extrair features e predizer uma amostra individual de teste selecionada por seu índice (`demo_index`):
 
@@ -159,7 +159,7 @@ pred = rf.predict(features_demo)
 
 ---
 
-## 📁 Estrutura do Repositório
+## Estrutura do Repositório
 
 ```text
 ExoHunter-ML/
@@ -174,7 +174,7 @@ ExoHunter-ML/
 
 ---
 
-## 🚀 Como Executar
+## Como Executar
 
 1. **Clone o repositório:**
 ```bash

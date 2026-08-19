@@ -7,7 +7,7 @@
 [![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-orange.svg?logo=jupyter&logoColor=white)](https://jupyter.org/)
 [![Scikit-Learn](https://img.shields.io/badge/scikit--learn-F7931E?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
 [![XGBoost](https://img.shields.io/badge/XGBoost-1.7%2B-red.svg)](https://xgboost.readthedocs.io/)
-[![NASA Kepler](https://img.shields.io/badge/Data-NASA%20Kepler%20Space%20Telescope-11244D?logo=nasa&logoColor=white)](https://exoplanetarchive.ipac.caltech.edu/)
+[![Kaggle Dataset](https://img.shields.io/badge/Kaggle-Kepler%20Dataset-20BEFF?logo=kaggle&logoColor=white)](https://www.kaggle.com/datasets/keplersmachines/kepler-labelled-time-series-data)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 <br/>

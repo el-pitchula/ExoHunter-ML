@@ -163,18 +163,18 @@ A validação gráfica dos candidatos compara a profundidade de queda observada 
 ```text
 ExoHunter-ML/
 │
-├── 📁 assets/                         # Imagens e gifs utilizados na documentação
+├── assets/                         # Imagens e gifs utilizados na documentação
 │   ├── 0001.png
 │   ├── 0002.gif
 │   ├── 0003.png
 │   ├── 0004.png
 │   └── 0005.png
 │
-├── 📄 ExoHunter_ML.ipynb              # Pipeline principal: EDA, extração de features e modelos
-├── 📄 ExoHunter_ML(lab2).ipynb        # Experimentos secundários, tuning e validações adicionais
-├── 📄 modelagem_matemática(ExoHML).ipynb # Dedução e formulação da física da fotometria
-├── 📄 requirements.txt                # Dependências do projeto (Pandas, Scikit-Learn, Matplotlib, etc.)
-└── 📄 README.md                       # Documentação do repositório
+├── ExoHunter_ML.ipynb              # Pipeline principal: EDA, extração de features e modelos
+├── ExoHunter_ML(lab2).ipynb        # Experimentos secundários, tuning e validações adicionais
+├── modelagem_matemática(ExoHML).ipynb # Dedução e formulação da física da fotometria
+├── requirements.txt                # Dependências do projeto (Pandas, Scikit-Learn, Matplotlib, etc.)
+└── README.md                       # Documentação do repositório
 
 ```
 

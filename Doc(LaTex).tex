@@ -1,0 +1,466 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazilian]{babel}
+\usepackage{geometry}
+\geometry{a4paper, top=3cm, bottom=2cm, left=3cm, right=2cm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{tocloft}
+
+\definecolor{corprincipal}{RGB}{31,56,100}
+\definecolor{corcodigo}{RGB}{245,245,245}
+\definecolor{cinzaescuro}{RGB}{80,80,80}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=corprincipal,
+    urlcolor=corprincipal,
+    citecolor=corprincipal,
+    pdftitle={ExoHunter-ML: Detecção de Exoplanetas em Curvas de Luz do Kepler},
+    pdfauthor={Jay},
+    pdfsubject={Projeto de Engenharia e Operacionalização de Machine Learning}
+}
+
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{corprincipal}}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{corprincipal}}{\thesubsection}{1em}{}
+
+\lstset{
+    backgroundcolor=\color{corcodigo},
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{gray!40},
+    keywordstyle=\color{corprincipal}\bfseries,
+    commentstyle=\color{cinzaescuro}\itshape,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    xleftmargin=1.5em,
+    language=Python
+}
+
+% ---- CABEÇALHO/RODAPÉ
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\small ExoHunter-ML}
+\fancyhead[R]{\small Engenharia de Aprendizado de Máquina}
+\fancyfoot[C]{\thepage}
+
+\setstretch{1.15}
+
+% ---- começo do doc
+
+\begin{document}
+\begin{titlepage}
+\begin{center}
+
+\vspace*{1.5cm}
+
+{\Large \bfseries CENTRO UNIVERSITÁRIO DE BRASÍLIA -- CEUB}\\[0.3cm]
+{\large Pós-Graduação em Engenharia de Inteligência Artificial}\\[0.2cm]
+{\large Disciplina: Engenharia de Aprendizado de Máquina}
+
+\vspace{2.5cm}
+
+\rule{\linewidth}{0.5pt}\\[0.5cm]
+{\Huge \bfseries ExoHunter-ML}\\[0.4cm]
+{\Large Detecção de Exoplanetas em Curvas de Luz\\ do Telescópio Kepler via Aprendizado Supervisionado}\\[0.5cm]
+\rule{\linewidth}{0.5pt}
+
+\vspace{1.5cm}
+
+{\large Projeto de Engenharia e Operacionalização de Machine Learning}\\[0.3cm]
+{\large Trilha A -- Aprendizado Supervisionado (Classificação)}
+
+\vspace{3cm}
+
+\begin{tabular}{ll}
+\textbf{Autor(a):} & Jaysa Gabrielly \\[0.2cm]
+\textbf{Professor(a):} & Jonathan de Moura Feitosa \\[0.2cm]
+\textbf{Repositório:} & \url{https://github.com/el-pitchula/ExoHunter-ML} \\[0.2cm]
+\textbf{Link do Colab:} & \href{https://colab.research.google.com/drive/1hIk7K1Vod68CgRqxU7ApXS6xHVQwsmf4?usp=sharing}{notebook} \\[0.2cm]
+\textbf{Modelagem matemática:} & \href{https://colab.research.google.com/drive/1anHAKn8FQQ9Zok4hykcavm5CGYpA2acC?usp=sharing}{notebook} \\
+\end{tabular}
+
+\vfill
+
+{\large Brasília -- DF}\\
+{\large \the\year}
+
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+
+% 1. INTRODUÇÃO
+\section{Introdução}
+
+Este relatório documenta o desenvolvimento completo do projeto \textbf{ExoHunter-ML}, uma solução de Machine Learning para detecção de exoplanetas a partir de curvas de luz estelares observadas pelo telescópio espacial \textit{Kepler}, da NASA. O trabalho foi desenvolvido como projeto final da disciplina de Engenharia de Aprendizado de Máquina, seguindo a Trilha A -- Aprendizado Supervisionado (Classificação).
+
+O objetivo geral é aplicar, de ponta a ponta, o ciclo de vida de um modelo de Machine Learning em um cenário realista de engenharia: desde a compreensão do problema e a escolha de um conjunto de dados público, passando pela preparação dos dados, engenharia de atributos, treinamento e ajuste de hiperparâmetros, até a avaliação crítica dos resultados, a explicabilidade do modelo e a proposta de uma estratégia de monitoramento em produção.
+
+O projeto foi desenvolvido em Python, no ambiente Google Colab, e está organizado em dois notebooks complementares:
+
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Notebook entregável} (\texttt{ExoHunter\_ML.ipynb}): apresenta o pipeline final, limpo e direto, do problema à proposta de monitoramento -- é este notebook que acompanha este relatório;
+    \item \textbf{Notebook de experimentos} (\texttt{ExoHunter\_ML(lab).ipynb}): um registro do processo investigativo completo, incluindo tentativas descartadas, depurações e a análise aprofundada dos erros do modelo, usado como material de apoio para a apresentação.
+\end{itemize}
+
+
+% 2. DESCRIÇÃO DO PROBLEMA
+\section{Descrição do problema}
+
+Quando um planeta cruza, do nosso ponto de vista, a frente de sua estrela hospedeira -- um evento chamado \textbf{trânsito} --, uma fração pequena e periódica da luz da estrela é bloqueada. Esse método de detecção, conhecido como \textbf{método de trânsito}, foi a técnica utilizada pela missão Kepler para identificar milhares de candidatos a exoplanetas ao longo de quase uma década de observação contínua de mais de 150 mil estrelas.
+
+O problema abordado neste projeto consiste em: \textbf{dada uma curva de luz (série temporal de medições de fluxo estelar), classificar se essa estrela possui ou não evidência de um planeta em trânsito}. Trata-se, portanto, de um problema de \textbf{classificação binária supervisionada}, com duas características centrais que moldam toda a abordagem de engenharia adotada:
+
+\begin{enumerate}[leftmargin=1.5cm]
+    \item \textbf{Forte desbalanceamento de classes}: trânsitos são eventos raros -- a grande maioria das estrelas observadas não apresenta nenhum planeta detectável em trânsito;
+    \item \textbf{Sinal sutil}: mesmo quando existe um planeta, a queda no brilho é da ordem de fração de 1\% a poucos por cento do fluxo total, facilmente confundida com ruído instrumental.
+\end{enumerate}
+
+Esses dois fatores tornam o problema um bom exercício de engenharia de ML: não basta treinar um classificador qualquer -- é necessário lidar explicitamente com desbalanceamento, escolher métricas de avaliação adequadas (accuracy sozinha é enganosa) e construir uma representação de atributos que capture o padrão físico do fenômeno.
+
+
+% 3. DATASET UTILIZADO
+\section{Dataset utilizado}
+
+Foi utilizado o conjunto de dados público \textbf{Kepler Labelled Time Series Data}, disponível no Kaggle:
+
+\begin{center}
+\url{https://www.kaggle.com/datasets/keplersmachines/kepler-labelled-time-series-data}
+\end{center}
+
+O carregamento é feito de forma totalmente reprodutível via biblioteca \texttt{kagglehub}, sem necessidade de autenticação local e sem caminhos de arquivo fixos, atendendo ao requisito de reprodutibilidade do projeto.
+
+\subsection*{Estrutura dos dados}
+
+\begin{itemize}[leftmargin=1.5cm]
+    \item Cada linha representa uma estrela observada; cada uma das 3.197 colunas \texttt{FLUX.1} a \texttt{FLUX.3197} é uma medição de fluxo luminoso em um instante de tempo;
+    \item A coluna \texttt{LABEL} indica a classe: \texttt{2} = estrela com exoplaneta confirmado, \texttt{1} = sem exoplaneta;
+    \item Conjunto de treino: 5.087 curvas; conjunto de teste: 570 curvas (arquivos \texttt{exoTrain.csv} e \texttt{exoTest.csv}, respectivamente).
+\end{itemize}
+
+\subsection*{Qualidade dos dados}
+
+A verificação inicial não identificou nenhum valor ausente, infinito ou linha duplicada em nenhum dos dois conjuntos, conforme resumido na Tabela~\ref{tab:qualidade}.
+
+\begin{table}[H]
+\centering
+\caption{Verificação de qualidade dos dados}
+\label{tab:qualidade}
+\begin{tabular}{lr}
+\toprule
+\textbf{Indicador} & \textbf{Valor} \\
+\midrule
+Amostras de treino & 5.087 \\
+Amostras de teste & 570 \\
+Pontos por curva & 3.197 \\
+Valores ausentes (treino / teste) & 0 / 0 \\
+Valores infinitos (treino / teste) & 0 / 0 \\
+Duplicatas (treino / teste) & 0 / 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{Desbalanceamento de classes}
+
+O dataset apresenta um desbalanceamento extremo entre as classes, conforme mostrado na Tabela~\ref{tab:desbalanceamento}: apenas 0,73\% das estrelas do conjunto de treino possuem exoplaneta confirmado.
+
+\begin{table}[H]
+\centering
+\caption{Distribuição de classes}
+\label{tab:desbalanceamento}
+\begin{tabular}{lrrrr}
+\toprule
+& \multicolumn{2}{c}{\textbf{Treino}} & \multicolumn{2}{c}{\textbf{Teste}} \\
+\textbf{Classe} & Quantidade & \% & Quantidade & \% \\
+\midrule
+Sem exoplaneta & 5.050 & 99{,}27\% & 565 & 99{,}12\% \\
+Com exoplaneta & 37 & 0{,}73\% & 5 & 0{,}88\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Esse desbalanceamento é o fator determinante de várias decisões de engenharia descritas nas seções seguintes, em especial a escolha das métricas de avaliação e o uso de ponderação de classes no treinamento do modelo.
+
+
+% 4. METODOLOGIA ADOTADA
+\section{Metodologia adotada}
+
+O projeto segue a \textbf{Trilha A -- Aprendizado Supervisionado (Classificação)}, utilizando o algoritmo \textbf{Random Forest}. A escolha se justifica por três motivos práticos:
+
+\begin{enumerate}[leftmargin=1.5cm]
+    \item lida bem com atributos numéricos de escalas diferentes, sem exigir padronização;
+    \item captura relações não lineares entre os atributos estatísticos extraídos das curvas;
+    \item fornece, nativamente, uma medida de importância de atributos, o que facilita a etapa de explicabilidade.
+\end{enumerate}
+
+O desenvolvimento seguiu uma metodologia experimental iterativa: um notebook de experimentos foi utilizado para testar hipóteses, investigar o desbalanceamento, comparar abordagens de engenharia de atributos (com e sem normalização) e depurar problemas de implementação, antes de consolidar o pipeline final -- limpo e sem os caminhos descartados -- no notebook entregável, que é o objeto central deste relatório.
+
+
+% 5. PIPELINE DE MACHINE LEARNING
+\section{Pipeline de Machine Learning}
+
+\subsection{Ingestão dos dados}
+
+Os dados são baixados via \texttt{kagglehub.dataset\_download()} e carregados com \texttt{pandas.read\_csv()}, sem qualquer caminho local fixo, garantindo que o notebook seja executável por terceiros sem modificação.
+
+\subsection{Análise exploratória (EDA)}
+
+Além da checagem de qualidade e da distribuição de classes (Seção 3), foi realizada uma inspeção visual de curvas de luz individuais de cada classe, permitindo observar a diferença de comportamento entre estrelas com e sem trânsito detectável.
+
+\subsection{Engenharia de atributos}
+
+Utilizar diretamente os 3.197 pontos de fluxo como entrada do modelo geraria um problema severo de alta dimensionalidade frente a apenas 37 exemplos positivos no treino, além de manter todo o ruído bruto do sinal. A solução adotada foi resumir cada curva em um vetor de \textbf{15 atributos estatísticos}:
+
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Tendência central}: \texttt{mean}, \texttt{median}
+    \item \textbf{Dispersão}: \texttt{std}, \texttt{mad}, \texttt{range}
+    \item \textbf{Extremos}: \texttt{min}, \texttt{max}
+    \item \textbf{Quantis}: \texttt{q01}, \texttt{q05}, \texttt{q25}, \texttt{q75}, \texttt{q95}, \texttt{q99}
+    \item \textbf{Forma da distribuição}: \texttt{skewness}, \texttt{kurtosis}
+\end{itemize}
+
+Essa escolha não é arbitrária: como um trânsito afeta apenas uma fração pequena dos pontos de uma curva, ele desloca a mediana muito pouco, mas cria uma cauda assimétrica de valores extremos -- exatamente o que os quantis inferiores, o \texttt{skewness} negativo e a \texttt{kurtosis} elevada capturam estatisticamente.
+
+\subsection{Normalização, padronização e codificação}
+
+Como o Random Forest é invariante a escala (não é sensível à magnitude absoluta dos atributos, apenas à sua ordenação relativa em cada divisão de árvore), \textbf{não foi necessário aplicar normalização ou padronização} aos atributos numéricos. A única codificação aplicada foi a da variável-alvo: o rótulo original (\texttt{1} = sem exoplaneta, \texttt{2} = com exoplaneta) foi recodificado para o padrão binário \texttt{0}/\texttt{1}.
+
+\subsection{Separação treino / validação / teste}
+
+A base de treino original (5.087 curvas) foi dividida de forma estratificada em treino (80\%) e validação (20\%), preservando a proporção de classes. O conjunto de teste (\texttt{exoTest.csv}, 570 curvas) foi mantido completamente isolado, utilizado apenas na avaliação final.
+
+\begin{table}[H]
+\centering
+\caption{Tamanho dos conjuntos após engenharia de atributos}
+\begin{tabular}{lr}
+\toprule
+\textbf{Conjunto} & \textbf{Dimensão} \\
+\midrule
+Treino & 4.069 $\times$ 15 \\
+Validação & 1.018 $\times$ 15 \\
+Teste & 570 $\times$ 15 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Treinamento e ajuste de hiperparâmetros}
+
+O modelo foi treinado com \texttt{class\_weight="balanced"}, para compensar o desbalanceamento diretamente no processo de divisão das árvores. Os hiperparâmetros não foram escolhidos manualmente: foi utilizada \texttt{RandomizedSearchCV} com validação cruzada de 3 folds, otimizando o \textbf{F1-score} (métrica que equilibra precisão e recall, mais adequada que accuracy dado o desbalanceamento).
+
+\begin{lstlisting}[language=Python, caption={Configuração da busca de hiperparâmetros}]
+param_distributions = {
+    "n_estimators": [200, 300, 400],
+    "max_depth": [None, 10, 20, 30],
+    "min_samples_split": [2, 5, 10],
+    "min_samples_leaf": [1, 2, 4],
+    "max_features": ["sqrt", "log2", None]
+}
+
+search = RandomizedSearchCV(
+    rf, param_distributions=param_distributions,
+    n_iter=12, scoring="f1", cv=3,
+    random_state=SEED, n_jobs=-1
+)
+\end{lstlisting}
+
+Os melhores hiperparâmetros encontrados, com F1 médio de \textbf{0,8403} na validação cruzada, foram:
+
+\begin{table}[H]
+\centering
+\caption{Melhores hiperparâmetros (RandomizedSearchCV)}
+\begin{tabular}{ll}
+\toprule
+\textbf{Hiperparâmetro} & \textbf{Valor} \\
+\midrule
+\texttt{n\_estimators} & 400 \\
+\texttt{max\_depth} & 10 \\
+\texttt{min\_samples\_split} & 2 \\
+\texttt{min\_samples\_leaf} & 1 \\
+\texttt{max\_features} & \texttt{None} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+
+
+% 6. RESULTADOS EXPERIMENTAIS
+\section{Resultados experimentais}
+
+\subsection{Desempenho no conjunto de validação}
+
+\begin{table}[H]
+\centering
+\caption{Métricas na validação}
+\begin{tabular}{lr}
+\toprule
+\textbf{Métrica} & \textbf{Valor} \\
+\midrule
+Accuracy & 1{,}0000 \\
+Precision & 1{,}0000 \\
+Recall & 1{,}0000 \\
+F1-score & 1{,}0000 \\
+ROC-AUC & 1{,}0000 \\
+Average Precision & 1{,}0000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+O desempenho perfeito na validação deve ser interpretado com cautela: o conjunto de validação contém apenas cerca de 7 exemplos positivos (20\% dos 37 exemplos positivos do treino original), de modo que qualquer métrica de recall/precision nesse conjunto tem alta variância -- um único exemplo classificado incorretamente já alteraria substancialmente os números. O resultado é, portanto, mais um indicativo de que o modelo captura bem o padrão nos dados de validação do que uma garantia de desempenho perfeito em produção. A avaliação no conjunto de teste, isolado e nunca utilizado no ajuste do modelo, é a referência mais confiável.
+
+\subsection{Desempenho no conjunto de teste}
+
+\begin{table}[H]
+\centering
+\caption{Métricas no teste (conjunto isolado)}
+\label{tab:metricas_teste}
+\begin{tabular}{lr}
+\toprule
+\textbf{Métrica} & \textbf{Valor} \\
+\midrule
+Accuracy & 0{,}9965 \\
+Precision & 1{,}0000 \\
+Recall & 0{,}6000 \\
+F1-score & 0{,}7500 \\
+ROC-AUC & 0{,}9547 \\
+Average Precision & 0{,}6263 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Relatório de classificação detalhado -- conjunto de teste}
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Classe} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-score} & \textbf{Suporte} \\
+\midrule
+Sem exoplaneta & 0{,}9965 & 1{,}0000 & 0{,}9982 & 565 \\
+Com exoplaneta & 1{,}0000 & 0{,}6000 & 0{,}7500 & 5 \\
+\midrule
+Accuracy (geral) & \multicolumn{3}{c}{0{,}9965} & 570 \\
+Macro avg & 0{,}9982 & 0{,}8000 & 0{,}8741 & 570 \\
+Weighted avg & 0{,}9965 & 0{,}9965 & 0{,}9961 & 570 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Em termos absolutos: dos 5 exoplanetas reais presentes no conjunto de teste, o modelo identificou corretamente \textbf{3} (60\%), sem gerar nenhum falso positivo (\textit{precision} = 100\%). Os gráficos de matriz de confusão correspondentes estão disponíveis no notebook anexado ao final deste documento.
+
+
+% 7. ANÁLISE DAS MÉTRICAS
+\section{Análise das métricas}
+
+A escolha das métricas de avaliação foi diretamente determinada pelo desbalanceamento de classes descrito na Seção 3. Uma accuracy de 99,65\% no teste, isoladamente, seria enganosa: um classificador trivial que nunca prevê ``exoplaneta'' atingiria uma accuracy de aproximadamente 99,12\% no mesmo conjunto, sem ter aprendido absolutamente nada. Por isso, o foco da avaliação recai sobre \textbf{Precision}, \textbf{Recall}, \textbf{F1-score} e \textbf{ROC-AUC}.
+
+\textbf{Precision perfeita (1,0)}: nenhum falso positivo foi gerado no teste -- toda vez que o modelo sinaliza um candidato a exoplaneta, o sinal é real. Do ponto de vista de um pipeline de triagem científica, isso é valioso, pois reduz o esforço de validação manual por especialistas.
+
+\textbf{Recall de 0,60}: o modelo identifica 3 dos 5 candidatos reais no teste, deixando 2 sem detecção (falsos negativos). Esse é o principal ponto de atenção do modelo -- a investigação detalhada desses casos (disponível no notebook de experimentos) mostrou que os falsos negativos não são explicados de forma simples por ``trânsitos rasos''; a análise de importância de atributos (SHAP) por instância aponta que, nesses casos específicos, a queda de fluxo, mesmo quando profunda, fica concentrada em poucos pontos e por isso não desloca suficientemente a mediana da curva -- a estatística de maior peso no modelo.
+
+\textbf{ROC-AUC de 0,9547}: como essa métrica avalia a capacidade do modelo de \emph{ranquear} corretamente positivos acima de negativos, independentemente do limiar de decisão, um valor próximo de 1 indica que o modelo separa bem as classes em termos de probabilidade -- mesmo quando a decisão final (com limiar padrão de 0,5) erra alguns casos.
+
+Em suma, o modelo prioriza \textbf{não gerar falsos alarmes} em detrimento de capturar 100\% dos casos positivos -- um trade-off razoável para um cenário de triagem, mas que motiva a estratégia de monitoramento de recall descrita na Seção 9.
+
+
+% 8. EXPLICABILIDADE DO MODELO
+\section{Explicabilidade do modelo}
+
+Foram utilizadas \textbf{duas técnicas complementares} de explicabilidade: a importância de atributos nativa do Random Forest (\textit{Feature Importance}) e valores de \textbf{SHAP} (\textit{SHapley Additive exPlanations}), calculados com \texttt{shap.TreeExplainer}.
+
+\begin{table}[H]
+\centering
+\caption{Comparação das técnicas de explicabilidade -- 5 atributos mais relevantes}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Atributo} & \textbf{Feature Importance} & \textbf{SHAP (média $|$valor$|$)} \\
+\midrule
+\texttt{median} & 0{,}5278 & 0{,}3247 \\
+\texttt{skewness} & 0{,}1120 & 0{,}0372 \\
+\texttt{q01} & 0{,}0863 & 0{,}0341 \\
+\texttt{mean} & 0{,}0642 & 0{,}0248 \\
+\texttt{q99} & 0{,}0496 & 0{,}0130 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+As duas técnicas concordam de forma consistente: a \textbf{mediana} (\texttt{median}) domina disparadamente a decisão do modelo, seguida por \texttt{skewness} e \texttt{q01}. Essa concordância entre uma medida global (Feature Importance) e uma medida local agregada (SHAP) reforça a confiabilidade da interpretação.
+
+\textbf{Interpretação física do resultado:} como um trânsito afeta apenas uma fração pequena dos pontos de uma curva, ele quase não desloca a mediana em relação a uma curva sem trânsito -- exceto quando o evento é grande o suficiente para deixar uma marca estatística perceptível mesmo nessa medida robusta. O fato de a mediana ser o atributo mais importante sugere que o modelo aprendeu, essencialmente, a distinguir curvas cujo ``nível de repouso'' já se desloca de forma anômala -- um proxy razoável, mas não perfeito, da presença de um trânsito, o que também explica a origem dos falsos negativos discutidos na Seção 7.
+
+
+% 9. ESTRATÉGIA DE MONITORAMENTO
+\section{Estratégia de monitoramento}
+
+Para uma eventual implantação em produção, propõe-se o acompanhamento contínuo dos indicadores listados na Tabela~\ref{tab:monitoramento}, cobrindo tanto a saúde dos dados de entrada (\textit{data drift}) quanto o comportamento do modelo (\textit{prediction drift}) e seu desempenho preditivo.
+
+\begin{table}[H]
+\centering
+\caption{Plano de monitoramento em produção}
+\label{tab:monitoramento}
+\small
+\begin{tabular}{p{3.3cm}p{4.3cm}p{4.8cm}}
+\toprule
+\textbf{Indicador} & \textbf{Objetivo} & \textbf{Ação em caso de alerta} \\
+\midrule
+Distribuição das features & Detectar \textit{data drift} & Investigar mudança nos dados de entrada \\
+Distribuição das probabilidades & Detectar \textit{prediction drift} & Investigar alteração no comportamento do modelo \\
+Recall & Monitorar detecção de positivos & Avaliar necessidade de retreinamento \\
+Precision & Monitorar falsos alarmes & Investigar qualidade dos dados e do modelo \\
+F1-score & Acompanhar desempenho geral & Comparar com o baseline reportado neste relatório \\
+Taxa de falsos negativos & Controlar o principal risco do sistema & Investigar prioritariamente \\
+Volume de novas observações & Verificar alterações no fluxo de aquisição & Verificar pipeline de coleta de dados \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{Estratégia de retreinamento}
+
+Recomenda-se um ciclo de retreinamento \textbf{disparado por evento} (e não puramente periódico), acionado quando: (i) o F1-score em uma amostra de validação contínua cair abaixo de um limiar definido em relação ao baseline reportado (F1 = 0,75 no teste); (ii) a distribuição das 15 features estatísticas apresentar desvio significativo (por exemplo, via teste de Kolmogorov--Smirnov) em relação à distribuição de treino; ou (iii) um volume suficiente de novos exemplos rotulados (confirmados por especialistas) se acumular, permitindo reforçar o aprendizado sobre a classe minoritária. Dado o baixo volume de exemplos positivos disponíveis, cada novo caso confirmado tem valor desproporcionalmente alto para o retreinamento do modelo.
+
+
+% 10. CONCLUSÃO
+\section{Conclusão}
+
+Este projeto desenvolveu, de ponta a ponta, um pipeline de Machine Learning supervisionado para detecção de exoplanetas em curvas de luz do telescópio Kepler, cobrindo desde a ingestão reprodutível dos dados até a proposta de monitoramento em produção. Os principais resultados foram:
+
+\begin{itemize}[leftmargin=1.5cm]
+    \item Um modelo Random Forest, com hiperparâmetros otimizados via \texttt{RandomizedSearchCV}, capaz de identificar candidatos a exoplanetas com \textbf{precisão perfeita} (nenhum falso positivo) e \textbf{recall de 60\%} no conjunto de teste isolado;
+    \item Uma engenharia de atributos fundamentada fisicamente, reduzindo cada curva de 3.197 pontos a 15 estatísticas interpretáveis, sem prejuízo relevante de desempenho frente ao uso dos dados brutos;
+    \item Duas técnicas de explicabilidade (Feature Importance e SHAP) convergindo para a mesma conclusão: a mediana da curva é o fator mais determinante da decisão do modelo, uma consequência direta de como um trânsito afeta estatisticamente a distribuição de fluxo;
+    \item Uma proposta concreta de monitoramento e retreinamento, adequada às limitações de volume de dados da classe minoritária.
+\end{itemize}
+
+Como principal limitação, destaca-se que a abordagem de features estatísticas agregadas descarta a ordem temporal dos dados -- não captura diretamente a periodicidade nem a forma exata do trânsito, o que provavelmente explica os falsos negativos observados. Como trabalho futuro, sugere-se explorar as Trilhas C (CNN 1D) ou D (RNN/LSTM) do enunciado, que poderiam extrair diretamente da série temporal bruta os padrões de periodicidade e formato do trânsito atualmente inacessíveis a este pipeline.
+
+\newpage
+\section*{Referências}
+\addcontentsline{toc}{section}{Referências}
+
+\begin{enumerate}[leftmargin=1.5cm]
+    \item Kaggle. \textit{Kepler Labelled Time Series Data}. Disponível em: \url{https://www.kaggle.com/datasets/keplersmachines/kepler-labelled-time-series-data}.
+    \item NASA. \textit{Kepler Mission Overview}. Disponível em: \url{https://science.nasa.gov/mission/kepler/}.
+    \item Repositório do projeto: \url{https://github.com/el-pitchula/ExoHunter-ML}.
+\end{enumerate}
+
+\end{document}
